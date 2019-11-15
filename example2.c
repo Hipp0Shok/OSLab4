@@ -10,7 +10,7 @@ void main(void)        /*  Textcount.c  */
     {
         int pid;
         int p[2], q[2];
-        FILE *fdopen, *fp;
+        FILE *fp;
         char c;
         int newline = TRUE;
         int total;
