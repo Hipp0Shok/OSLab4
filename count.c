@@ -5,8 +5,12 @@ void main(void)  /*  COUNT.C  */
 /*  чтобы ввод данных выполнялся из канала P,     */
 /*  а вывод – в канал Q    */
             /*        */
+//Код не рабоатет верно с кириллицей. Используйте пока латиницу
 {
     int count = 0;
     while (getchar() != EOF)
-    count++; printf("%d\n", count);
+    {
+    	count++;	
+    }
+	printf("%d\n", count);
 }
