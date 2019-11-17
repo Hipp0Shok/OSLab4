@@ -21,7 +21,7 @@ void outputStr(char* str)
 	putchar(*str);
 }
 
-int main(int argc, char* argv)
+int main(void)
 {
 	char buff[LENGTH];
 	char *str;

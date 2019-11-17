@@ -64,49 +64,55 @@ void outputStr(char* str)
 	strInfo(str, &strLen, &strWords);
 	emptyChar = LENGTH - LEFT - RIGHT - 1 - strLen;
 	printBorder(LEFT);
-	if(strWords == 1)
+	switch(strWords)
 	{
-		for(j = 0; j < strLen; j++)
-		{
-			putchar(*str);
-			str++;
-		}
-		for(j = 0; j < emptyChar; j++)
-		{
-			putchar(' ');
-		}
-	}
-	else
-	{
-		spaces = div(emptyChar, strWords-1);
-		for(j = 0; j < strLen; j++)
-		{
-			if(*str == ' ')
+		case 0:
+			for(j = 0; j < emptyChar; j++)
 			{
-				if(prevSymbol == TRUE)
-				{
-					for(i = 0; i < spaces.quot; i++)
-					{
-						putchar(' ');
-					}
-					if(spaces.rem != 0)
-					{
-						putchar(' ');
-						spaces.rem -= 1;
-					}
-					prevSymbol = FALSE;	
-				}
+				putchar(' ');
 			}
-			else
+			break;
+		case 1:
+			for(j = 0; j < strLen; j++)
 			{
-				if(prevSymbol == FALSE)
-				{
-					prevSymbol = TRUE;
-				}
+				putchar(*str);
+				str++;
 			}
-			putchar(*str);
-			str++;
-		}
+			for(j = 0; j < emptyChar; j++)
+			{
+				putchar(' ');
+			}
+			break;
+		default:
+			spaces = div(emptyChar, strWords-1);
+			for(j = 0; j < strLen; j++)
+			{
+				if(*str == ' ')
+				{
+					if(prevSymbol == TRUE)
+					{
+						for(i = 0; i < spaces.quot; i++)
+						{
+							putchar(' ');
+						}
+						if(spaces.rem != 0)
+						{
+							putchar(' ');
+							spaces.rem -= 1;
+						}
+						prevSymbol = FALSE;	
+					}
+				}
+				else
+				{
+					if(prevSymbol == FALSE)
+					{
+						prevSymbol = TRUE;
+					}
+				}
+				putchar(*str);
+				str++;
+			}
 	}
 	printBorder(RIGHT);
 	putchar('\n');
