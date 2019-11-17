@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define LEFT 20
-#define RIGHT 20
+#define RIGHT 10
 #define LENGTH 81
 #define TRUE 1
 #define FALSE 0
@@ -15,8 +15,6 @@ void printBorder(int amount)
 		putchar(' ');
 	}
 }
-
-
 
 int charCount(char* str)
 {
@@ -61,33 +59,54 @@ void strInfo(char* str, int* strLen, int* strWords)
 void outputStr(char* str)
 {
 	div_t spaces;
-	int strLen = 0, strWords = 0, emptyChar = 0, i =0;
+	int strLen = 0, strWords = 0, emptyChar = 0, i = 0, j = 0;
+	int prevSymbol = TRUE;
 	strInfo(str, &strLen, &strWords);
 	emptyChar = LENGTH - LEFT - RIGHT - 1 - strLen;
 	printBorder(LEFT);
-	spaces = div(emptyChar, strWords-1);
-	printf("%d, %d\n", spaces.quot, spaces.rem);
-	while(strWords != 1)
+	if(strWords == 1)
 	{
-		putchar(*str);
-		if(*str == ' ')
+		for(j = 0; j < strLen; j++)
 		{
-			for(i = 0; i < spaces.quot; i++)
-			{
-				putchar('b');
-			}
+			putchar(*str);
+			str++;
 		}
-		str++;
-		strWords -= 1;
+		for(j = 0; j < emptyChar; j++)
+		{
+			putchar(' ');
+		}
 	}
-	for(i = 0; i < spaces.rem; i++)
+	else
 	{
-		putchar(' ');
-	}
-	while(*str != '\n')
-	{
-		putchar(*str);
-		str++;
+		spaces = div(emptyChar, strWords-1);
+		for(j = 0; j < strLen; j++)
+		{
+			if(*str == ' ')
+			{
+				if(prevSymbol == TRUE)
+				{
+					for(i = 0; i < spaces.quot; i++)
+					{
+						putchar(' ');
+					}
+					if(spaces.rem != 0)
+					{
+						putchar(' ');
+						spaces.rem -= 1;
+					}
+					prevSymbol = FALSE;	
+				}
+			}
+			else
+			{
+				if(prevSymbol == FALSE)
+				{
+					prevSymbol = TRUE;
+				}
+			}
+			putchar(*str);
+			str++;
+		}
 	}
 	printBorder(RIGHT);
 	putchar('\n');
@@ -96,7 +115,23 @@ void outputStr(char* str)
 int main(void) 
 {
 	char buff[LENGTH - LEFT - RIGHT];
-	fgets(buff, LENGTH - LEFT - RIGHT, stdin);
-	outputStr(buff);
+	char *str;
+	while(1)
+	{
+		str = fgets(buff, LENGTH - LEFT - RIGHT, stdin);
+		if( str == NULL)
+		{
+			if( feof(stdin))
+			{
+				break;
+			}
+			else
+			{
+				printf("Произошла ошибка при считывании\n");
+				break;
+			}
+		}
+		outputStr(buff);
+	}
 	return 0;
 }
