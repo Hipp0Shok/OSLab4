@@ -2,8 +2,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define LEFT 20
-#define RIGHT 10
+#define LEFT 10
+#define RIGHT 30
 #define LENGTH 81
 #define TRUE 1
 #define FALSE 0
@@ -60,7 +60,7 @@ void outputStr(char* str)
 {
 	div_t spaces;
 	int strLen = 0, strWords = 0, emptyChar = 0, i = 0, j = 0;
-	int prevSymbol = TRUE;
+	int prevSymbol = FALSE;
 	strInfo(str, &strLen, &strWords);
 	emptyChar = LENGTH - LEFT - RIGHT - 1 - strLen;
 	printBorder(LEFT);
