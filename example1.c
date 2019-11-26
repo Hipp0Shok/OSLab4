@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-void main(void)        /*  LSWS.C                    */
+int main(void)        /*  LSWS.C                    */
                 /*  Создание программного канала    */
                 /*  для команд ls и wc                 */
     {
@@ -21,9 +21,9 @@ void main(void)        /*  LSWS.C                    */
                     switch(pid2 = fork())
                         {
                             case -1: /* Cбой при вызове fork()  */
-                        printf("Ошибка при вызове fork() #2 \n"); 
-                    exit(2);
-                    break;
+                                printf("Ошибка при вызове fork() #2 \n"); 
+                                exit(2);
+                                break;
                     case 0:        /*  ПОТОМОК  #2 */
                             close(0); dup(fd[0]); close(fd[0]); close(fd[1]);
                             execl("/usr/bin/wc", "wc", NULL);
