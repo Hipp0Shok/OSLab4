@@ -6,7 +6,7 @@
 #define        TRUE  1
 #define        FALSE 0
 #define        PERIOD '.'
-void main(void)        /*  Textcount.c  */
+int main(void)        /*  Textcount.c  */
     {
         int pid;
         int p[2], q[2];
