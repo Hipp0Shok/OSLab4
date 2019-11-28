@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #define        R  0        /*  stdin                      */
 #define        W  1     /*  stdout                    */
 #define        TRUE  1
@@ -11,8 +12,8 @@ int main(void)        /*  Textcount.c  */
         int pid;
         int p[2], q[2];
         FILE *fp;
-        char c;
-        int newline = TRUE;
+        int c;
+        int newline = TRUE, delete = FALSE;
         int total;
 
 /* Установка программных каналов p и q */
@@ -22,73 +23,63 @@ int main(void)        /*  Textcount.c  */
 /* p[W], q[W] - концы каналов для записи  */
         switch(pid = fork())
         {
-            case 0:  /*  ПОТОМОК  */
-                            /*    читает из  p[R]    */
-                            /*    пишет в    q[W]    */
-                            /*    p[W] и  q[R]  - закрыты    */
-                            /*    станд. ввод и p[R] - синонимы    */
-                            /*    станд. вывод и q[W] синонимы    */
-        /*        Канал    P     */
-                close(p[W]);
+            case -1:
+                perror("Ошибка при вызове fork.");
+                exit(1);
+                break;
+            case 0: /*Потомок*/
                 dup2(p[R], 0);
                 close(p[R]);
-                            /* Теперь станд. ввод и p[R] -  синонимы  */
-        /*        Канал Q         */
-                close(q[R]);
+                close(p[W]);
                 dup2(q[W], 1);
                 close(q[W]);
-
-    /* Теперь станд. вывод и  q[W] - синонимы  */
-    /* Запуск внешней независимой программы Count */
+                close(q[R]);
                 execl("./count", "count", NULL);
-                printf("textcount: Ошибка при вызове");
-                exit(1);
-            case -1: /* Cбой при вызове fork()  */
-                printf("Ошибка при вызове fork() \n");
-                exit(1);
-            default:   /* Это ПРЕДОК   */
-                    /*  Конец канала P преобразуется для */
-                    /*  записи в поток */
+                perror("Ошибка при вызове функции");
+                exit(2);
+                break;
+            default: /*Предок*/
                 close(p[R]);
-                close(q[W]);
                 fp = fdopen(p[W], "w");
-/* Посылка текстового файла в процесс COUNT  */ 
-            while((c=getchar()) != EOF )
-            {
-                switch(newline)
+
+                while(1)
+                {
+                    c = getchar();
+                    if( c == EOF)
                     {
-                        case TRUE:
-                            if (c == '\n')  /* Пустая строка  */
-                                putc(c, fp);
-                            else if (c == '.')
-                            {
-                                do
-                                {
-                                    c = getchar();
-                                }while(c != '\n' && c != EOF);
-                            }
-                            else
-                            {
-                                putc(c, fp);
-                                newline = FALSE;
-                            }
+                        if(feof(stdin))
+                        {
                             break;
-                        default:
-                            putc(c, fp);
-                            if (c == '\n')
-                            {
-                                newline = TRUE;
-                            }
+                        }
+                        else
+                        {
+                            perror("Ошибка при считывании символа.\n");
+                            exit(2);
+                        }
                     }
-            }
-            fclose(fp);     /* Чтобы принимающий процесс мог воспринимать */
-                     /* EOF  на конце канала для чтения            */
-    /* Теперь подключаем ввод результата  */
-    /* из канала Q                        */
-        dup2(q[R], 0); 
-        close(q[R]);
-        scanf("%d", &total);
-        printf("Общее число знаков  %d\n", total);
-        exit(0);
+                    if(newline)
+                    {
+                        if(c == '.')
+                        {
+                            delete = TRUE;
+                        }
+                        newline = FALSE;
+                    }
+                    if(c == '\n')
+                    {
+                        newline = TRUE;
+                        delete = FALSE;
+                    }
+                    if(delete == FALSE)
+                    {
+                        putc(c, fp);
+                    }
+                }
+                fclose(fp);
+                dup2(q[R], 0);
+                close(q[R]);
+                scanf("%d", &total);
+                printf("%d\n", total);
+                exit(0);
         }
     }
