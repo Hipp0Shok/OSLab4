@@ -49,6 +49,7 @@ int main(void)        /*  Textcount.c  */
                     {
                         if(feof(stdin))
                         {
+                            putc(c, fp);
                             break;
                         }
                         else
